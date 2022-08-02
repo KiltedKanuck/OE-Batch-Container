@@ -1,0 +1,3 @@
+-T /app/temp
+-rereadnolock
+-p /app/batchRunner.p

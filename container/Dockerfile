@@ -1,0 +1,67 @@
+# -------------- DOWNLOADER IMAGE -------------
+#build a downloader to get the openedge file
+FROM alpine:latest AS downloader
+# we need curl to 'get' the binary
+RUN apk --no-cache add curl
+# get the binary 
+RUN curl -k -L -s http://ec2-3-238-217-120.compute-1.amazonaws.com/PROGRESS_OE_12.5.2_LNX_64.tar.gz > openedge.tar.gz
+
+# -------------- BUILDER IMAGE -------------
+# use a builder to do the install. This will keep the image smaller
+FROM eclipse-temurin:11.0.13_8-jdk-focal AS builder
+
+RUN mkdir /installer
+COPY ./response.ini /installer/
+WORKDIR /installer
+COPY --from=downloader openedge.tar.gz ./
+RUN tar -xvf openedge.tar.gz
+
+WORKDIR /etc
+RUN /installer/proinst -b /installer/response.ini -l ./install.log
+RUN cat ./install.log
+
+# cleanup stuff we do not need for runtime
+RUN rm -rf /psc/oemgmt/ \
+    /psc/wrk_oemgmt/ \
+    /psc/dlc/ant/ \
+    /psc/dlc/demo* \
+    /psc/dlc/empty* \
+    /psc/dlc/esbadapter/ \
+    /psc/dlc/gradle/ \
+    /psc/dlc/hello \
+    /psc/dlc/inst_hlp \
+    /psc/dlc/install* \
+    /psc/dlc/*sports* \
+    /psc/dlc/javahelp/ \
+    /psc/dlc/newkw* \
+    /psc/dlc/notice.txt \
+    /psc/dlc/odbc/ \
+    /psc/dlc/oebuild/ \
+    /psc/dlc/ora/ \
+    /psc/dlc/pct/ \
+    /psc/dlc/prohelp/ \
+    /psc/dlc/prolang/ \
+    /psc/dlc/servers/ \
+    /psc/dlc/sonic/ \
+    /psc/dlc/templates/ \
+    /psc/dlc/ubqmanager/
+
+# fix permissions
+RUN find /psc/dlc -type d -exec chmod 'o-w' '{}' ';' &&\
+    find /psc/dlc -type f -exec chmod 'o-rwx' '{}' ';' 
+
+# -------------- FINAL IMAGE -------------
+# Now create final container as small as possible
+FROM eclipse-temurin:11.0.13_8-jdk-focal
+
+#copy /psc from the builder instance to this one
+COPY --from=builder /psc /psc
+# we need to enable TCP 
+RUN echo 'tcp    6 TCP' >> /etc/protocols
+#setup some ENV variables
+ENV PATH=/psc/dlc:/psc/dlc/bin:/psc/dlc/ant/bin:$PATH \
+    WRKDIR=/psc/wrk/ \
+    DLC=/psc/dlc/
+
+LABEL maintainer="cameron.wright@progress.com"
+

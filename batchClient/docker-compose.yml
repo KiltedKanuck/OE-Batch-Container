@@ -1,0 +1,10 @@
+version: '3.9'
+services: 
+    openedge:
+        image: "openedge:12."
+        volumes:
+            - ./logs:/app/logs
+            - ./temp:/app/temp
+            - ./src:/app/src
+            - ./batchRunner.p:/app/batchRunner.p
+            - ./batchRunner.pf:/app/batchRunner.pf
