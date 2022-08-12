@@ -1,0 +1,118 @@
+ADD TABLE "batchAgent"
+  AREA "batch"
+  LABEL "Batch Agent"
+  DUMP-NAME "batchagent"
+
+ADD FIELD "agentID" OF "batchAgent" AS character 
+  FORMAT "x(36)"
+  INITIAL ""
+  LABEL "Agent ID"
+  MAX-WIDTH 72
+  ORDER 10
+
+ADD FIELD "agentJobID" OF "batchAgent" AS int64 
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  MAX-WIDTH 8
+  ORDER 30
+
+ADD FIELD "agentActive" OF "batchAgent" AS logical 
+  FORMAT "yes/no"
+  INITIAL "no"
+  MAX-WIDTH 1
+  ORDER 40
+
+ADD INDEX "PriIDX" ON "batchAgent" 
+  AREA "batch"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "agentID" ASCENDING 
+
+ADD INDEX "WorkingIDX" ON "batchAgent" 
+  AREA "batch"
+  INDEX-FIELD "agentActive" ASCENDING 
+
+ADD TABLE "batchJob"
+  AREA "batch"
+  LABEL "Batch Job"
+  DUMP-NAME "batchjob"
+
+ADD FIELD "jobID" OF "batchJob" AS character 
+  FORMAT "x(36)"
+  INITIAL ""
+  MAX-WIDTH 72
+  ORDER 10
+
+ADD FIELD "agentID" OF "batchJob" AS character 
+  FORMAT "x(36)"
+  INITIAL ""
+  LABEL "Agent ID"
+  MAX-WIDTH 72
+  ORDER 20
+
+ADD FIELD "queueID" OF "batchJob" AS character 
+  FORMAT "x(36)"
+  INITIAL ""
+  MAX-WIDTH 72
+  ORDER 30
+
+ADD FIELD "jobDateTime" OF "batchJob" AS datetime-tz 
+  FORMAT "99/99/9999 HH:MM:SS.SSS+HH:MM"
+  INITIAL ?
+  MAX-WIDTH 12
+  ORDER 40
+
+ADD FIELD "jobAction" OF "batchJob" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  MAX-WIDTH 16
+  ORDER 50
+
+ADD INDEX "PriIDX" ON "batchJob" 
+  AREA "batch"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "jobID" ASCENDING 
+  INDEX-FIELD "agentID" ASCENDING 
+  INDEX-FIELD "queueID" ASCENDING 
+  INDEX-FIELD "jobDateTime" ASCENDING 
+
+ADD TABLE "batchQueue"
+  AREA "batch"
+  LABEL "Batch Queue"
+  DUMP-NAME "batchqueue"
+
+ADD FIELD "queueID" OF "batchQueue" AS character 
+  FORMAT "x(36)"
+  INITIAL ""
+  MAX-WIDTH 72
+  ORDER 10
+
+ADD FIELD "queueData" OF "batchQueue" AS clob 
+  FORMAT "x(8)"
+  INITIAL ?
+  LOB-AREA "batch"
+  LOB-BYTES 104857600
+  LOB-SIZE 100M
+  CLOB-CODEPAGE "iso8859-1"
+  CLOB-COLLATION "basic"
+  CLOB-TYPE 1
+  ORDER 20
+
+ADD FIELD "queueActive" OF "batchQueue" AS logical 
+  FORMAT "yes/no"
+  INITIAL "no"
+  MAX-WIDTH 1
+  ORDER 30
+
+ADD INDEX "PriIDX" ON "batchQueue" 
+  AREA "batch"
+  PRIMARY
+  INDEX-FIELD "queueID" ASCENDING 
+  INDEX-FIELD "queueActive" ASCENDING 
+
+.
+PSC
+cpstream=ISO8859-1
+.
+0000002265
