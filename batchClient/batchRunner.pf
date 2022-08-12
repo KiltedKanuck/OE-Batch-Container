@@ -2,4 +2,5 @@
 -db batch -H ec2-3-238-217-120.compute-1.amazonaws.com -S 11000 -N tcp
 -T /app/temp
 -rereadnolock
+-rand 2
 -p /app/batchRunner.p
