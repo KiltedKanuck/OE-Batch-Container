@@ -8,7 +8,7 @@ def var kJobID as char no-undo.
 // init your variables
 assign 
     iWait = 2
-    iLoop = 5
+    iLoop = 7
     iLooper = 0
     kMyID = guid(GENERATE-UUID)
 

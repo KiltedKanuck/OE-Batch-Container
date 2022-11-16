@@ -19,6 +19,6 @@ trap 'signal_handler' SIGTERM SIGINT
 
 export TERM=xterm
 
-$DLC/bin/pro -b -pf /app/batchRunner.pf
+$DLC/bin/_progres -b -pf /app/batchRunner.pf
 
 exit 1

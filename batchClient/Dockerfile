@@ -1,11 +1,14 @@
 FROM openedge:12.5.2
 
 # USE for production to self-contain your image
-#WORKDIR /app
-#COPY batchRunner.p ./batchRunner.p
-#COPY batchRunner.pf ./batchRunner.pf
-#COPY batchRunner.sh ./batchRunner.sh
+RUN mkdir /app
+RUN mkdir /app/temp
 
-#RUN chmod 755 /app/batchRunner.sh
+WORKDIR /app
+COPY batchRunner.p ./batchRunner.p
+COPY batchRunner.pf ./batchRunner.pf
+COPY batchRunner.sh ./batchRunner.sh
+
+RUN chmod 755 /app/batchRunner.sh
 
 ENTRYPOINT [ "/app/batchRunner.sh" ]
