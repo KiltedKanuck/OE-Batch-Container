@@ -4,20 +4,20 @@ FROM alpine:latest AS downloader
 # we need curl to 'get' the binary
 RUN apk --no-cache add curl
 # get the binary 
-RUN curl -k -L -s http://ec2-3-238-217-120.compute-1.amazonaws.com/PROGRESS_OE_12.5.2_LNX_64.tar.gz > openedge.tar.gz
+RUN curl http://ec2-54-80-142-101.compute-1.amazonaws.com:8081/repository/PugChallengeMaven/OpenEdge/linux/12.8.0/linux-12.8.0.tar > openedge.tar
 
 # -------------- BUILDER IMAGE -------------
 # use a builder to do the install. This will keep the image smaller
-FROM eclipse-temurin:11.0.13_8-jdk-focal AS builder
+FROM eclipse-temurin:17.0.8.1_1-jdk-focal AS builder
 
 RUN mkdir /installer
-COPY ./response.ini /installer/
+COPY ./response.ini /etc
 WORKDIR /installer
-COPY --from=downloader openedge.tar.gz ./
-RUN tar -xvf openedge.tar.gz
+COPY --from=downloader openedge.tar ./
+RUN tar -xvf openedge.tar
 
 WORKDIR /etc
-RUN /installer/proinst -b /installer/response.ini -l ./install.log
+RUN /installer/proinst -b ./response.ini -l ./install.log
 RUN cat ./install.log
 
 # cleanup stuff we do not need for runtime
@@ -52,7 +52,7 @@ RUN find /psc/dlc -type d -exec chmod 'o-w' '{}' ';' &&\
 
 # -------------- FINAL IMAGE -------------
 # Now create final container as small as possible
-FROM eclipse-temurin:11.0.13_8-jdk-focal
+FROM eclipse-temurin:17.0.8.1_1-jdk-focal
 
 #copy /psc from the builder instance to this one
 COPY --from=builder /psc /psc
