@@ -1,9 +1,9 @@
 # OE-Batch-Container
 OpenEdge Batch Container
 
-BUILD 12.5.2
+BUILD 12.8.3
 ./container
-docker build . -t openedge:12.5.2
+docker build . -t openedge:12.8.3
 
 BUILD oebatch
 ./batchClient

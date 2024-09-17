@@ -1,4 +1,4 @@
-FROM openedge:12.5.2
+FROM openedge:12.8.3
 
 # USE for production to self-contain your image
 RUN mkdir /app
